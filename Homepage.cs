@@ -9,7 +9,6 @@ using Fleck;
 using System.Text.Json;
 using System.Data.SQLite;
 using System.Data;
-using System.Drawing.Printing;
 
 namespace WebPrinting
 {
@@ -43,6 +42,8 @@ namespace WebPrinting
                     // Initiate Socket server as soon as the application is run
                     //
                     this.StartServer();
+
+                    manualStart.Visible = false;
                 }
             }
             catch (Exception ex)
@@ -64,7 +65,7 @@ namespace WebPrinting
                     string welcomeMessage = JsonSerializer.Serialize(new SocketMessage
                     {
                         Type = "welcome",
-                        Message = "Connected"
+                        Description = "Connected"
                     });
                     socket.Send(welcomeMessage);
                     Console.WriteLine("Client connected");
@@ -77,11 +78,20 @@ namespace WebPrinting
                     {
                         try
                         {
-                            messageObject.PrintMessage();
+                            string zplCommands = GetZPLCommands();
+
+                            zplCommands = zplCommands.Replace("{{SampleID}}", messageObject.Message.SampleID);
+                            zplCommands = zplCommands.Replace("{{Department}}", messageObject.Message.Department);
+                            zplCommands = zplCommands.Replace("{{Tests}}", messageObject.Message.Tests);
+                            zplCommands = zplCommands.Replace("{{Storage}}", messageObject.Message.Storage);
+                            zplCommands = zplCommands.Replace("{{PatientNames}}", messageObject.Message.PatientNames);
+
+                            PrintMessage(zplCommands);
+                            Console.WriteLine(zplCommands);
                             string successMessage = JsonSerializer.Serialize(new SocketMessage
                             {
                                 Type = "Success",
-                                Message = "Print job is completed"
+                                Description = "Print job is completed"
                             });
                             socket.Send(successMessage);
                         }
@@ -90,18 +100,17 @@ namespace WebPrinting
                             string exceptionMessage = JsonSerializer.Serialize(new SocketMessage
                             {
                                 Type = "Error",
-                                Message = $"{ex.Message}"
+                                Description = $"{ex.Message}"
                             });
                             socket.Send(exceptionMessage);
                         }
                     }
                     else
                     {
-                        messageObject.PrintMessage();
                         string unsupportedMessage = JsonSerializer.Serialize(new SocketMessage
                         {
                             Type = "unsupported",
-                            Message = $"{messageObject.Type} type of message is unsupported."
+                            Description = $"{messageObject.Type} type of message is unsupported."
                         });
                         socket.Send(unsupportedMessage);
                     }
@@ -132,8 +141,27 @@ namespace WebPrinting
             SQLiteCommand command = new SQLiteCommand(query, connection);
             SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter(command);
             DataTable dataTable = new DataTable();
+            DataTable dataTable2 = new DataTable();
             dataAdapter.Fill(dataTable);
-            this.printersSettings.DataSource = dataTable;
+            dataTable2.Columns.Add("S/N");
+            dataTable2.Columns.Add("Printer Name");
+            dataTable2.Columns.Add("ZPL Command"); 
+            dataTable2.Columns.Add("In Use");
+
+            int count = 1;
+            foreach (DataRow row in dataTable.Rows)
+            {
+                DataRow newRow = dataTable2.NewRow();
+                newRow["S/N"] = count;
+                newRow["Printer Name"] = row["printerModel"];
+                newRow["ZPL Command"] = row["zplCommands"];
+                string useThis = "No";
+                if (row["useThis"].ToString() == "1") useThis = "Yes";
+                newRow["In Use"] = useThis;
+                dataTable2.Rows.Add(newRow);
+                count++;
+            }
+            this.printersSettings.DataSource = dataTable2;
 
         }
 
@@ -176,6 +204,12 @@ namespace WebPrinting
                 if (response > 0)
                 {
                     this.printServerAutoStart.Checked = autostartValue;
+                    if (autostartValue)
+                    {
+                        StartServer();
+                        manualStart.Visible = false;
+                    }
+                    else manualStart.Visible = true;
                     MessageBox.Show("Saved successfully");
                 }
                 else
@@ -194,24 +228,55 @@ namespace WebPrinting
         {
             try
             {
+                SQLiteConnection connection = new SQLiteConnection(this.dbConnectionString);
+                connection.Open();
+
                 string printer = this.printers.SelectedItem.ToString();
                 int useThisPrinter = 0;
                 string zplCommands = this.zplCommands.Text;
                 if (this.useThisPrinter.Checked) useThisPrinter = 1;
 
-                string query = $"INSERT INTO PrinterSettings Values (NULL ,'{printer}','{zplCommands}',{useThisPrinter});";
-                SQLiteConnection connection = new SQLiteConnection(this.dbConnectionString);
-                connection.Open();
-                SQLiteCommand command = new SQLiteCommand(query, connection);
-                var response = command.ExecuteNonQuery();
-                if (response > 0)
+                string existingPrinter = $"SELECT * FROM PrinterSettings WHERE printerModel='{printer}';";
+
+                SQLiteCommand existingPrinterCommand = new SQLiteCommand(existingPrinter, connection);
+                SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter(existingPrinterCommand);
+                DataTable dataTable = new DataTable();
+                dataAdapter.Fill(dataTable);
+                if(dataTable.Rows.Count == 0)
                 {
-                    MessageBox.Show("Printer settings saved successfully");
+                    string query = $"INSERT INTO PrinterSettings Values (NULL ,'{printer}','{zplCommands}',{useThisPrinter});";
+
+                    SQLiteCommand command = new SQLiteCommand(query, connection);
+                    var response = command.ExecuteNonQuery();
+                    if (response > 0)
+                    {
+                        MessageBox.Show("Printer settings saved successfully");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Couldn't save data into the database.");
+                    }
                 }
-                else
+                if (dataTable.Rows.Count == 1)
                 {
-                    MessageBox.Show("Couldn't save data into the database.");
+                    string query = $"UPDATE PrinterSettings SET printerModel='{printer}', zplCommands='{zplCommands}', useThis={useThisPrinter} WHERE id={dataTable.Rows[0]["id"]};";
+
+                    SQLiteCommand command = new SQLiteCommand(query, connection);
+                    var response = command.ExecuteNonQuery();
+                    if (response > 0)
+                    {
+                        MessageBox.Show("Printer settings updated successfully");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Couldn't update data into the database.");
+                    }
                 }
+                if (dataTable.Rows.Count > 1)
+                {
+                    MessageBox.Show("Couldn't update data into the database because more than 1 records was found from the database.");
+                }
+
 
             }
             catch (Exception ex)
@@ -219,13 +284,112 @@ namespace WebPrinting
                 MessageBox.Show($"Error occured while trying to save printer settings. Error: {ex.Message}");
             }
         }
-    }
 
-    public class SocketMessage
-    {
-        public string Type { get; set; }
-        public string Message { get; set; }
-        public void PrintMessage()
+        private void EditPrinterSettings_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (this.printersSettings.SelectedRows.Count == 1)
+                {
+                    DataGridViewRow selectedRow = this.printersSettings.SelectedRows[0];
+
+                    // Get the data from the selected row
+                    string printerName = selectedRow.Cells["Printer Name"].Value.ToString();
+                    string zplCommands = selectedRow.Cells["ZPL Command"].Value.ToString();
+                    bool useThis = false;
+                    if (selectedRow.Cells["In Use"].Value.ToString() == "Yes") useThis = true;
+
+                    this.printers.Text = printerName;
+                    this.zplCommands.Text = zplCommands;
+                    this.useThisPrinter.Checked = useThis;
+                    this.homePageTabControl.SelectedTab = this.settingsPage;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Couldn't edit. Error: {ex.Message}");
+            }
+        }
+
+        private void ReloadPrintersList_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                LoadAvailablePrinters();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Couldn't reload printers list. Error: {ex.Message}");
+            }
+        }
+
+        private void DeletePrinterSettings_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SQLiteConnection connection = new SQLiteConnection(this.dbConnectionString);
+                connection.Open();
+
+                if (this.printersSettings.SelectedRows.Count == 1)
+                {
+                    DataGridViewRow selectedRow = this.printersSettings.SelectedRows[0];
+
+                    // Get the data from the selected row
+                    string printerName = selectedRow.Cells["Printer Name"].Value.ToString();
+
+                    string deletePrinter = $"DELETE FROM PrinterSettings WHERE printerModel='{printerName}';";
+
+                    SQLiteCommand deletePrinterCommand = new SQLiteCommand(deletePrinter, connection);
+                    var response = deletePrinterCommand.ExecuteNonQuery();
+
+                    if(response > 0)
+                    {
+                        MessageBox.Show($"{printerName} settings deleted successfully.");
+                        LoadAvailablePrinters();
+                    } else
+                    {
+                        MessageBox.Show($"{printerName} settings could not be deleted.");
+                    }
+
+
+                }
+
+
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error occured while trying to save printer settings. Error: {ex.Message}");
+            }
+        }
+
+        private string GetZPLCommands()
+        {
+            try
+            {
+                SQLiteConnection connection = new SQLiteConnection(this.dbConnectionString);
+                connection.Open();
+
+                string query = $"SELECT zplCommands FROM PrinterSettings WHERE useThis=1;";
+
+                SQLiteCommand selectQuery = new SQLiteCommand(query, connection);
+
+                SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter(selectQuery);
+                DataTable dataTable = new DataTable();
+                dataAdapter.Fill(dataTable);
+
+                return dataTable.Rows[0]["zplCommands"].ToString();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Couldn't load saved zpl commands to be used. Error: {ex.Message}");
+                return "";
+            }
+            
+        }
+
+        private void PrintMessage(string message)
         {
             foreach (DiscoveredUsbPrinter usbPrinter in UsbDiscoverer.GetZebraUsbPrinters(new ZebraPrinterFilter()))
             {
@@ -239,7 +403,7 @@ namespace WebPrinting
                         {
                             ZebraPrinter printer = ZebraPrinterFactory.GetInstance(conn);
 
-                            byte[] zplData = Encoding.ASCII.GetBytes(this.Message);
+                            byte[] zplData = Encoding.ASCII.GetBytes(message);
 
                             conn.Write(zplData);
                             conn.Close();
@@ -270,6 +434,26 @@ namespace WebPrinting
             }
 
         }
+
+        private void ManualStart_Click(object sender, EventArgs e)
+        {
+            this.StartServer();
+        }
     }
 
+    public class SocketMessage
+    {
+        public string Type { get; set; }
+        public string Description { get; set; }
+        public IncomingMessage Message { get; set; }
+    }
+
+    public class IncomingMessage
+    {
+        public string SampleID { get; set; }
+        public string Tests { get; set; }
+        public string PatientNames { get; set; }
+        public string Storage { get; set; }
+        public string Department { get; set; }
+    }
 }

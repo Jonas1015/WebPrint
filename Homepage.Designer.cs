@@ -40,11 +40,14 @@ namespace WebPrinting
             this.reloadPrinters = new System.Windows.Forms.Label();
             this.setupTab = new System.Windows.Forms.TabPage();
             this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.homePageTabControl = new System.Windows.Forms.TabControl();
             this.welcomePage = new System.Windows.Forms.TabPage();
+            this.manualStart = new System.Windows.Forms.Button();
             this.printersListPage = new System.Windows.Forms.TabPage();
+            this.deletePrinterSettings = new System.Windows.Forms.Button();
+            this.editPrinterSettings = new System.Windows.Forms.Button();
+            this.reloadPrintersList = new System.Windows.Forms.Button();
             this.printersSettings = new System.Windows.Forms.DataGridView();
             this.settingsPage = new System.Windows.Forms.TabPage();
             this.zplCommands = new System.Windows.Forms.TextBox();
@@ -57,7 +60,7 @@ namespace WebPrinting
             this.savePrintServerSettingsButton = new System.Windows.Forms.Button();
             this.printServerAutoStart = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.tabControl1.SuspendLayout();
+            this.homePageTabControl.SuspendLayout();
             this.welcomePage.SuspendLayout();
             this.printersListPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.printersSettings)).BeginInit();
@@ -75,7 +78,7 @@ namespace WebPrinting
             // 
             this.printersList.Location = new System.Drawing.Point(0, 0);
             this.printersList.Name = "printersList";
-            this.printersList.Size = new System.Drawing.Size(120, 96);
+            this.printersList.Size = new System.Drawing.Size(120, 95);
             this.printersList.TabIndex = 0;
             // 
             // reloadPrinters
@@ -102,16 +105,6 @@ namespace WebPrinting
             this.label1.TabIndex = 2;
             this.label1.Text = "Welcome to Printing Module.";
             // 
-            // label2
-            // 
-            this.label2.Font = new System.Drawing.Font("Arial Narrow", 15.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.label2.Location = new System.Drawing.Point(211, 338);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(360, 38);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Minimize this window and continue to work";
-            // 
             // notifyIcon1
             // 
             this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
@@ -119,21 +112,21 @@ namespace WebPrinting
             this.notifyIcon1.Visible = true;
             this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon1_MouseDoubleClick);
             // 
-            // tabControl1
+            // homePageTabControl
             // 
-            this.tabControl1.Controls.Add(this.welcomePage);
-            this.tabControl1.Controls.Add(this.printersListPage);
-            this.tabControl1.Controls.Add(this.settingsPage);
-            this.tabControl1.Location = new System.Drawing.Point(13, 13);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(783, 434);
-            this.tabControl1.TabIndex = 4;
+            this.homePageTabControl.Controls.Add(this.welcomePage);
+            this.homePageTabControl.Controls.Add(this.printersListPage);
+            this.homePageTabControl.Controls.Add(this.settingsPage);
+            this.homePageTabControl.Location = new System.Drawing.Point(13, 13);
+            this.homePageTabControl.Name = "homePageTabControl";
+            this.homePageTabControl.SelectedIndex = 0;
+            this.homePageTabControl.Size = new System.Drawing.Size(783, 434);
+            this.homePageTabControl.TabIndex = 4;
             // 
             // welcomePage
             // 
+            this.welcomePage.Controls.Add(this.manualStart);
             this.welcomePage.Controls.Add(this.label1);
-            this.welcomePage.Controls.Add(this.label2);
             this.welcomePage.Location = new System.Drawing.Point(4, 22);
             this.welcomePage.Name = "welcomePage";
             this.welcomePage.Padding = new System.Windows.Forms.Padding(3);
@@ -142,8 +135,21 @@ namespace WebPrinting
             this.welcomePage.Text = "Welcome";
             this.welcomePage.UseVisualStyleBackColor = true;
             // 
+            // manualStart
+            // 
+            this.manualStart.Location = new System.Drawing.Point(283, 344);
+            this.manualStart.Name = "manualStart";
+            this.manualStart.Size = new System.Drawing.Size(157, 38);
+            this.manualStart.TabIndex = 3;
+            this.manualStart.Text = "Start Print Server";
+            this.manualStart.UseVisualStyleBackColor = true;
+            this.manualStart.Click += new System.EventHandler(this.ManualStart_Click);
+            // 
             // printersListPage
             // 
+            this.printersListPage.Controls.Add(this.deletePrinterSettings);
+            this.printersListPage.Controls.Add(this.editPrinterSettings);
+            this.printersListPage.Controls.Add(this.reloadPrintersList);
             this.printersListPage.Controls.Add(this.printersSettings);
             this.printersListPage.Location = new System.Drawing.Point(4, 22);
             this.printersListPage.Name = "printersListPage";
@@ -152,14 +158,48 @@ namespace WebPrinting
             this.printersListPage.Text = "Printers List";
             this.printersListPage.UseVisualStyleBackColor = true;
             // 
+            // deletePrinterSettings
+            // 
+            this.deletePrinterSettings.Location = new System.Drawing.Point(671, 149);
+            this.deletePrinterSettings.Name = "deletePrinterSettings";
+            this.deletePrinterSettings.Size = new System.Drawing.Size(91, 36);
+            this.deletePrinterSettings.TabIndex = 3;
+            this.deletePrinterSettings.Text = "Delete";
+            this.deletePrinterSettings.UseVisualStyleBackColor = true;
+            this.deletePrinterSettings.Click += new System.EventHandler(this.DeletePrinterSettings_Click);
+            // 
+            // editPrinterSettings
+            // 
+            this.editPrinterSettings.Location = new System.Drawing.Point(671, 77);
+            this.editPrinterSettings.Name = "editPrinterSettings";
+            this.editPrinterSettings.Size = new System.Drawing.Size(91, 36);
+            this.editPrinterSettings.TabIndex = 2;
+            this.editPrinterSettings.Text = "Edit";
+            this.editPrinterSettings.UseVisualStyleBackColor = true;
+            this.editPrinterSettings.Click += new System.EventHandler(this.EditPrinterSettings_Click);
+            // 
+            // reloadPrintersList
+            // 
+            this.reloadPrintersList.Location = new System.Drawing.Point(671, 13);
+            this.reloadPrintersList.Name = "reloadPrintersList";
+            this.reloadPrintersList.Size = new System.Drawing.Size(91, 36);
+            this.reloadPrintersList.TabIndex = 1;
+            this.reloadPrintersList.Text = "Reload";
+            this.reloadPrintersList.UseVisualStyleBackColor = true;
+            this.reloadPrintersList.Click += new System.EventHandler(this.ReloadPrintersList_Click);
+            // 
             // printersSettings
             // 
+            this.printersSettings.AllowDrop = true;
             this.printersSettings.AllowUserToAddRows = false;
             this.printersSettings.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.printersSettings.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.printersSettings.BackgroundColor = System.Drawing.Color.White;
+            this.printersSettings.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.printersSettings.Dock = System.Windows.Forms.DockStyle.Left;
             this.printersSettings.Location = new System.Drawing.Point(0, 0);
             this.printersSettings.Name = "printersSettings";
-            this.printersSettings.Size = new System.Drawing.Size(775, 408);
+            this.printersSettings.ReadOnly = true;
+            this.printersSettings.Size = new System.Drawing.Size(653, 408);
             this.printersSettings.TabIndex = 0;
             // 
             // settingsPage
@@ -280,12 +320,12 @@ namespace WebPrinting
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.homePageTabControl);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Homepage";
             this.Text = "Print Server";
             this.Load += new System.EventHandler(this.Homepage_Load);
-            this.tabControl1.ResumeLayout(false);
+            this.homePageTabControl.ResumeLayout(false);
             this.welcomePage.ResumeLayout(false);
             this.printersListPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.printersSettings)).EndInit();
@@ -303,9 +343,8 @@ namespace WebPrinting
         private Button printButton;
         private string selectedPrinter;
         private Label label1;
-        private Label label2;
         private NotifyIcon notifyIcon1;
-        private TabControl tabControl1;
+        private TabControl homePageTabControl;
         private TabPage welcomePage;
         private TabPage settingsPage;
         private CheckBox useThisPrinter;
@@ -321,6 +360,10 @@ namespace WebPrinting
         private string dbConnectionString = "Data Source=WebPrintServerDB.db;Version=3;";
         private TextBox zplCommands;
         private DataGridView printersSettings;
+        private Button deletePrinterSettings;
+        private Button editPrinterSettings;
+        private Button reloadPrintersList;
+        private Button manualStart;
     }
 }
 
