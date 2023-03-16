@@ -17,12 +17,10 @@ C:\Users\jonas\source\repos\WebPrinting\bin\Debug\SdkApi.Core.dll
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\SdkApi.Desktop.dll
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\SdkApi.Desktop.Usb.dll
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\SharpSnmpLib.dll
-C:\Users\jonas\source\repos\WebPrinting\bin\Debug\Windows.winmd
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\BouncyCastle.Crypto.xml
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\Newtonsoft.Json.xml
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\SdkApi.Core.xml
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\SdkApi.Desktop.xml
-C:\Users\jonas\source\repos\WebPrinting\obj\Debug\WebPrinting.exe.config
 C:\Users\jonas\source\repos\WebPrinting\obj\Debug\WebPrinting.csproj.CopyComplete
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\Csv.dll
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\FluentFTP.dll
@@ -53,3 +51,13 @@ C:\Users\jonas\source\repos\WebPrinting\bin\Debug\System.Threading.Tasks.Extensi
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\System.ValueTuple.xml
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\ZebraPrinterSdk.xml
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\Fleck.dll
+C:\Users\jonas\source\repos\WebPrinting\bin\Debug\WebPrintServerDB.db
+C:\Users\jonas\source\repos\WebPrinting\bin\Debug\EntityFramework.dll
+C:\Users\jonas\source\repos\WebPrinting\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\jonas\source\repos\WebPrinting\bin\Debug\SQLitePCLRaw.core.dll
+C:\Users\jonas\source\repos\WebPrinting\bin\Debug\System.Data.SQLite.dll
+C:\Users\jonas\source\repos\WebPrinting\bin\Debug\System.Data.SQLite.EF6.dll
+C:\Users\jonas\source\repos\WebPrinting\bin\Debug\System.Data.SQLite.Linq.dll
+C:\Users\jonas\source\repos\WebPrinting\bin\Debug\EntityFramework.xml
+C:\Users\jonas\source\repos\WebPrinting\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\jonas\source\repos\WebPrinting\bin\Debug\System.Data.SQLite.xml
