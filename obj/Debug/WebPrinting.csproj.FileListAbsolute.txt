@@ -51,7 +51,6 @@ C:\Users\jonas\source\repos\WebPrinting\bin\Debug\System.Threading.Tasks.Extensi
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\System.ValueTuple.xml
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\ZebraPrinterSdk.xml
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\Fleck.dll
-C:\Users\jonas\source\repos\WebPrinting\bin\Debug\WebPrintServerDB.db
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\EntityFramework.dll
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\EntityFramework.SqlServer.dll
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\SQLitePCLRaw.core.dll
@@ -61,3 +60,4 @@ C:\Users\jonas\source\repos\WebPrinting\bin\Debug\System.Data.SQLite.Linq.dll
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\EntityFramework.xml
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\EntityFramework.SqlServer.xml
 C:\Users\jonas\source\repos\WebPrinting\bin\Debug\System.Data.SQLite.xml
+C:\Users\jonas\source\repos\WebPrinting\bin\Debug\WebPrintServer.db

@@ -23,28 +23,7 @@ namespace WebPrinting
         {
             try
             {
-                string query = $"SELECT * FROM GeneralSettings;";
-
-                SQLiteConnection connection = new SQLiteConnection(this.dbConnectionString);
-                connection.Open();
-                SQLiteCommand command = new SQLiteCommand(query, connection);
-                SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter(command);
-                DataTable dataTable = new DataTable();
-                dataAdapter.Fill(dataTable);
-                LoadPrinters();
-                LoadAvailablePrinters();
-                if (dataTable.Rows.Count > 0 && dataTable.Rows[0]["autoStart"].ToString() == "1")
-                {
-                    this.printServerAutoStart.Checked = true;
-                    //Hide window
-                    this.WindowState = FormWindowState.Minimized;
-                    //
-                    // Initiate Socket server as soon as the application is run
-                    //
-                    this.StartServer();
-
-                    manualStart.Visible = false;
-                }
+                LoadPrintServerSettings();
             }
             catch (Exception ex)
             {
@@ -54,7 +33,7 @@ namespace WebPrinting
 
         private void StartServer()
         {
-            WebSocketServer server = new WebSocketServer("ws://127.0.0.1:4444")
+            WebSocketServer server = new WebSocketServer($"ws://{this.ipAddress.Text}:{this.port.Text}")
             {
                 RestartAfterListenError = true
             };
@@ -85,6 +64,7 @@ namespace WebPrinting
                             zplCommands = zplCommands.Replace("{{Tests}}", messageObject.Message.Tests);
                             zplCommands = zplCommands.Replace("{{Storage}}", messageObject.Message.Storage);
                             zplCommands = zplCommands.Replace("{{PatientNames}}", messageObject.Message.PatientNames);
+                            zplCommands = zplCommands.Replace("{{Date}}", messageObject.Message.Date);
 
                             PrintMessage(zplCommands);
                             Console.WriteLine(zplCommands);
@@ -130,6 +110,43 @@ namespace WebPrinting
                this.printers.Items.Add(printer);
             }
 
+        }
+
+        private void LoadPrintServerSettings()
+        {
+            string query = $"SELECT * FROM PrintServerSettings;";
+
+            SQLiteConnection connection = new SQLiteConnection(this.dbConnectionString);
+            connection.Open();
+            SQLiteCommand command = new SQLiteCommand(query, connection);
+            SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter(command);
+            DataTable dataTable = new DataTable();
+            dataAdapter.Fill(dataTable);
+            LoadPrinters();
+            LoadAvailablePrinters();
+            if (dataTable.Rows.Count > 0)
+            {
+
+                this.ipAddress.Text = dataTable.Rows[0]["ipAddress"].ToString();
+                this.port.Text = dataTable.Rows[0]["portNumber"].ToString();
+
+                if (dataTable.Rows[0]["autoStart"].ToString() == "1")
+                {
+                    this.printServerAutoStart.Checked = true;
+                    //Hide window
+                    this.WindowState = FormWindowState.Minimized;
+                    //
+                    // Initiate Socket server as soon as the application is run
+                    //
+                    this.StartServer();
+
+                    manualStart.Visible = false;
+                }
+                else
+                {   
+                    manualStart.Visible = true;
+                }
+            }
         }
 
         private void LoadAvailablePrinters()
@@ -190,32 +207,43 @@ namespace WebPrinting
             try
             {
                 var autostartValue = this.printServerAutoStart.Checked;
+                var ipAddress = this.ipAddress.Text;
+                var port = this.port.Text;
                 int autoStart = 0;
                 if (autostartValue)
                 {
                     autoStart = 1;
                 }
 
-                string query = $"UPDATE GeneralSettings set autoStart={autoStart} WHERE id=1;";
-                SQLiteConnection connection = new SQLiteConnection(this.dbConnectionString);
-                connection.Open();
-                SQLiteCommand command = new SQLiteCommand(query, connection);
-                var response = command.ExecuteNonQuery();
-                if (response > 0)
+                if(ipAddress != "" && port != "")
                 {
-                    this.printServerAutoStart.Checked = autostartValue;
-                    if (autostartValue)
+                    if (int.TryParse(port, out int parsedPort))
                     {
-                        StartServer();
-                        manualStart.Visible = false;
+                        string query = $"UPDATE PrintServerSettings set autoStart={autoStart},ipAddress='{ipAddress}',portNumber={parsedPort}  WHERE id=1;";
+                        SQLiteConnection connection = new SQLiteConnection(this.dbConnectionString);
+                        connection.Open();
+                        SQLiteCommand command = new SQLiteCommand(query, connection);
+                        var response = command.ExecuteNonQuery();
+                        if (response > 0)
+                        {
+                            MessageBox.Show("Print Server settings saved successfully");
+                        }
+                        else
+                        {
+                            MessageBox.Show("Couldn't save print servert settings into the database.");
+                        }
+                        LoadPrintServerSettings();
                     }
-                    else manualStart.Visible = true;
-                    MessageBox.Show("Saved successfully");
-                }
-                else
+                    else
+                    {
+                        MessageBox.Show("Port value must be integer");
+                    }
+
+                } else
                 {
-                    MessageBox.Show("Couldn't save data into the database.");
+                    MessageBox.Show("IP Address and Port are required fields.");
                 }
+                
             }
             catch (Exception ex)
             {
@@ -389,55 +417,79 @@ namespace WebPrinting
             
         }
 
-        private void PrintMessage(string message)
+        private void PrintMessage(string zplCommands)
         {
-            foreach (DiscoveredUsbPrinter usbPrinter in UsbDiscoverer.GetZebraUsbPrinters(new ZebraPrinterFilter()))
+            try
             {
-                Connection conn = usbPrinter.GetConnection();
-                if (conn != null)
+                var usbPrinters = UsbDiscoverer.GetZebraUsbPrinters(new ZebraPrinterFilter());
+                if (usbPrinters.Count == 1)
                 {
-                    try
+
+                    foreach (DiscoveredUsbPrinter usbPrinter in usbPrinters)
                     {
-                        conn.Open();
-                        if (conn.Connected)
+                        Connection conn = usbPrinter.GetConnection();
+                        if (conn != null)
                         {
-                            ZebraPrinter printer = ZebraPrinterFactory.GetInstance(conn);
+                            try
+                            {
+                                conn.Open();
+                                if (conn.Connected)
+                                {
+                                    ZebraPrinter printer = ZebraPrinterFactory.GetInstance(conn);
 
-                            byte[] zplData = Encoding.ASCII.GetBytes(message);
+                                    byte[] zplData = Encoding.ASCII.GetBytes(zplCommands);
 
-                            conn.Write(zplData);
-                            conn.Close();
-                            break;
+                                    conn.Write(zplData);
+                                    conn.Close();
+                                    break;
 
+                                }
+                                else
+                                {
+                                    conn.Close();
+                                    continue;
+                                }
+
+                            }
+                            catch (ConnectionException ex)
+                            {
+                                // Handle exception
+                                MessageBox.Show($"Print error: {ex.StackTrace}");
+                                continue;
+                            }
+                            finally { conn.Close(); }
                         }
-                        else
-                        {
-                            conn.Close();
-                            continue;
-                        }
-
                     }
-                    catch (ConnectionException ex)
-                    {
-                        // Handle exception
-                        MessageBox.Show($"Print error: {ex.StackTrace}");
-                        continue;
-                    }
-                    finally { conn.Close(); }
                 }
-                else
+                if(usbPrinters.Count > 1)
                 {
-                    MessageBox.Show("No printer connection");
-                    continue;
+                    MessageBox.Show("Multiple printers connected. Use 1 printer at a time.");
                 }
-
+                if (usbPrinters.Count == 0)
+                {
+                    MessageBox.Show("No printer is connected.");
+                }
             }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show($"Error occured: Error: {ex.Message}");
+            }
+            
 
         }
 
         private void ManualStart_Click(object sender, EventArgs e)
         {
             this.StartServer();
+        }
+
+        private void TestZPL_Click(object sender, EventArgs e)
+        {
+            if(zplCommands.Text.Length > 0)
+            {
+               this.PrintMessage(zplCommands.Text);
+            }
         }
     }
 
@@ -455,5 +507,6 @@ namespace WebPrinting
         public string PatientNames { get; set; }
         public string Storage { get; set; }
         public string Department { get; set; }
+        public string Date { get; set; }
     }
 }
