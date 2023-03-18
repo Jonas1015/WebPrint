@@ -51,6 +51,14 @@ namespace WebPrinting
             this.reloadPrintersList = new System.Windows.Forms.Button();
             this.printersSettings = new System.Windows.Forms.DataGridView();
             this.settingsPage = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.testZPL = new System.Windows.Forms.Button();
+            this.savePrintersSettingsButton = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
+            this.zplCommands = new System.Windows.Forms.TextBox();
+            this.printerSelectionLabel = new System.Windows.Forms.Label();
+            this.useThisPrinter = new System.Windows.Forms.CheckBox();
+            this.printers = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.port = new System.Windows.Forms.TextBox();
             this.ipAddress = new System.Windows.Forms.TextBox();
@@ -58,21 +66,14 @@ namespace WebPrinting
             this.savePrintServerSettingsButton = new System.Windows.Forms.Button();
             this.addressLabel = new System.Windows.Forms.Label();
             this.printServerAutoStart = new System.Windows.Forms.CheckBox();
-            this.testZPL = new System.Windows.Forms.Button();
-            this.zplCommands = new System.Windows.Forms.TextBox();
-            this.printers = new System.Windows.Forms.ComboBox();
-            this.savePrintersSettingsButton = new System.Windows.Forms.Button();
-            this.label5 = new System.Windows.Forms.Label();
-            this.printerSelectionLabel = new System.Windows.Forms.Label();
-            this.useThisPrinter = new System.Windows.Forms.CheckBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.homePageTabControl.SuspendLayout();
             this.welcomePage.SuspendLayout();
             this.printersListPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.printersSettings)).BeginInit();
             this.settingsPage.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // printButton
@@ -105,13 +106,14 @@ namespace WebPrinting
             // 
             // label1
             // 
-            this.label1.Font = new System.Drawing.Font("Malgun Gothic", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.label1.Location = new System.Drawing.Point(131, 244);
+            this.label1.Font = new System.Drawing.Font("Lucida Bright", 27.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.SystemColors.InfoText;
+            this.label1.Location = new System.Drawing.Point(30, 36);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(522, 56);
+            this.label1.Size = new System.Drawing.Size(208, 207);
             this.label1.TabIndex = 2;
-            this.label1.Text = "Welcome to Printing Module.";
+            this.label1.Text = "DHIS2 LAB ZEBRA PRINT MODULE";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // notifyIcon1
             // 
@@ -133,6 +135,8 @@ namespace WebPrinting
             // 
             // welcomePage
             // 
+            this.welcomePage.BackgroundImage = global::WebPrinting.Properties.Resources.PrintServer;
+            this.welcomePage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.welcomePage.Controls.Add(this.manualStart);
             this.welcomePage.Controls.Add(this.label1);
             this.welcomePage.Location = new System.Drawing.Point(4, 22);
@@ -145,12 +149,16 @@ namespace WebPrinting
             // 
             // manualStart
             // 
-            this.manualStart.Location = new System.Drawing.Point(283, 344);
+            this.manualStart.BackColor = System.Drawing.Color.Gainsboro;
+            this.manualStart.FlatAppearance.BorderColor = System.Drawing.Color.Black;
+            this.manualStart.FlatAppearance.BorderSize = 40;
+            this.manualStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.manualStart.Location = new System.Drawing.Point(62, 307);
             this.manualStart.Name = "manualStart";
             this.manualStart.Size = new System.Drawing.Size(157, 38);
             this.manualStart.TabIndex = 3;
             this.manualStart.Text = "Start Print Server";
-            this.manualStart.UseVisualStyleBackColor = true;
+            this.manualStart.UseVisualStyleBackColor = false;
             this.manualStart.Click += new System.EventHandler(this.ManualStart_Click);
             // 
             // printersListPage
@@ -222,6 +230,86 @@ namespace WebPrinting
             this.settingsPage.Text = "Settings";
             this.settingsPage.UseVisualStyleBackColor = true;
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.testZPL);
+            this.groupBox2.Controls.Add(this.savePrintersSettingsButton);
+            this.groupBox2.Controls.Add(this.label5);
+            this.groupBox2.Controls.Add(this.zplCommands);
+            this.groupBox2.Controls.Add(this.printerSelectionLabel);
+            this.groupBox2.Controls.Add(this.useThisPrinter);
+            this.groupBox2.Controls.Add(this.printers);
+            this.groupBox2.Location = new System.Drawing.Point(6, 108);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(763, 294);
+            this.groupBox2.TabIndex = 17;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Printer Settings";
+            // 
+            // testZPL
+            // 
+            this.testZPL.Location = new System.Drawing.Point(531, 237);
+            this.testZPL.Name = "testZPL";
+            this.testZPL.Size = new System.Drawing.Size(98, 35);
+            this.testZPL.TabIndex = 14;
+            this.testZPL.Text = "Test ZPL";
+            this.testZPL.UseVisualStyleBackColor = true;
+            this.testZPL.Click += new System.EventHandler(this.TestZPL_Click);
+            // 
+            // savePrintersSettingsButton
+            // 
+            this.savePrintersSettingsButton.Location = new System.Drawing.Point(646, 237);
+            this.savePrintersSettingsButton.Name = "savePrintersSettingsButton";
+            this.savePrintersSettingsButton.Size = new System.Drawing.Size(107, 35);
+            this.savePrintersSettingsButton.TabIndex = 11;
+            this.savePrintersSettingsButton.Text = "Save ";
+            this.savePrintersSettingsButton.UseVisualStyleBackColor = true;
+            this.savePrintersSettingsButton.Click += new System.EventHandler(this.SavePrintersSettingsButton_Click);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(12, 86);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(82, 13);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "ZPL Commands";
+            // 
+            // zplCommands
+            // 
+            this.zplCommands.Location = new System.Drawing.Point(107, 83);
+            this.zplCommands.Multiline = true;
+            this.zplCommands.Name = "zplCommands";
+            this.zplCommands.Size = new System.Drawing.Size(375, 189);
+            this.zplCommands.TabIndex = 13;
+            // 
+            // printerSelectionLabel
+            // 
+            this.printerSelectionLabel.AutoSize = true;
+            this.printerSelectionLabel.Location = new System.Drawing.Point(12, 41);
+            this.printerSelectionLabel.Name = "printerSelectionLabel";
+            this.printerSelectionLabel.Size = new System.Drawing.Size(68, 13);
+            this.printerSelectionLabel.TabIndex = 8;
+            this.printerSelectionLabel.Text = "Printer Name";
+            // 
+            // useThisPrinter
+            // 
+            this.useThisPrinter.AutoSize = true;
+            this.useThisPrinter.Location = new System.Drawing.Point(531, 41);
+            this.useThisPrinter.Name = "useThisPrinter";
+            this.useThisPrinter.Size = new System.Drawing.Size(135, 17);
+            this.useThisPrinter.TabIndex = 5;
+            this.useThisPrinter.Text = "Use this printer settings";
+            this.useThisPrinter.UseVisualStyleBackColor = true;
+            // 
+            // printers
+            // 
+            this.printers.FormattingEnabled = true;
+            this.printers.Location = new System.Drawing.Point(107, 41);
+            this.printers.Name = "printers";
+            this.printers.Size = new System.Drawing.Size(375, 21);
+            this.printers.TabIndex = 12;
+            // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.port);
@@ -289,85 +377,11 @@ namespace WebPrinting
             this.printServerAutoStart.Text = "Print Server Auto Start";
             this.printServerAutoStart.UseVisualStyleBackColor = true;
             // 
-            // testZPL
+            // imageList1
             // 
-            this.testZPL.Location = new System.Drawing.Point(531, 237);
-            this.testZPL.Name = "testZPL";
-            this.testZPL.Size = new System.Drawing.Size(98, 35);
-            this.testZPL.TabIndex = 14;
-            this.testZPL.Text = "Test ZPL";
-            this.testZPL.UseVisualStyleBackColor = true;
-            this.testZPL.Click += new System.EventHandler(this.TestZPL_Click);
-            // 
-            // zplCommands
-            // 
-            this.zplCommands.Location = new System.Drawing.Point(107, 83);
-            this.zplCommands.Multiline = true;
-            this.zplCommands.Name = "zplCommands";
-            this.zplCommands.Size = new System.Drawing.Size(375, 189);
-            this.zplCommands.TabIndex = 13;
-            // 
-            // printers
-            // 
-            this.printers.FormattingEnabled = true;
-            this.printers.Location = new System.Drawing.Point(107, 41);
-            this.printers.Name = "printers";
-            this.printers.Size = new System.Drawing.Size(375, 21);
-            this.printers.TabIndex = 12;
-            // 
-            // savePrintersSettingsButton
-            // 
-            this.savePrintersSettingsButton.Location = new System.Drawing.Point(646, 237);
-            this.savePrintersSettingsButton.Name = "savePrintersSettingsButton";
-            this.savePrintersSettingsButton.Size = new System.Drawing.Size(107, 35);
-            this.savePrintersSettingsButton.TabIndex = 11;
-            this.savePrintersSettingsButton.Text = "Save ";
-            this.savePrintersSettingsButton.UseVisualStyleBackColor = true;
-            this.savePrintersSettingsButton.Click += new System.EventHandler(this.SavePrintersSettingsButton_Click);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(12, 86);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(82, 13);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "ZPL Commands";
-            // 
-            // printerSelectionLabel
-            // 
-            this.printerSelectionLabel.AutoSize = true;
-            this.printerSelectionLabel.Location = new System.Drawing.Point(12, 41);
-            this.printerSelectionLabel.Name = "printerSelectionLabel";
-            this.printerSelectionLabel.Size = new System.Drawing.Size(68, 13);
-            this.printerSelectionLabel.TabIndex = 8;
-            this.printerSelectionLabel.Text = "Printer Name";
-            // 
-            // useThisPrinter
-            // 
-            this.useThisPrinter.AutoSize = true;
-            this.useThisPrinter.Location = new System.Drawing.Point(531, 41);
-            this.useThisPrinter.Name = "useThisPrinter";
-            this.useThisPrinter.Size = new System.Drawing.Size(135, 17);
-            this.useThisPrinter.TabIndex = 5;
-            this.useThisPrinter.Text = "Use this printer settings";
-            this.useThisPrinter.UseVisualStyleBackColor = true;
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.testZPL);
-            this.groupBox2.Controls.Add(this.savePrintersSettingsButton);
-            this.groupBox2.Controls.Add(this.label5);
-            this.groupBox2.Controls.Add(this.zplCommands);
-            this.groupBox2.Controls.Add(this.printerSelectionLabel);
-            this.groupBox2.Controls.Add(this.useThisPrinter);
-            this.groupBox2.Controls.Add(this.printers);
-            this.groupBox2.Location = new System.Drawing.Point(6, 108);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(763, 294);
-            this.groupBox2.TabIndex = 17;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Printer Settings";
+            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // Homepage
             // 
@@ -384,10 +398,10 @@ namespace WebPrinting
             this.printersListPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.printersSettings)).EndInit();
             this.settingsPage.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -424,6 +438,7 @@ namespace WebPrinting
         private TextBox port;
         private TextBox ipAddress;
         private GroupBox groupBox2;
+        private ImageList imageList1;
     }
 }
 

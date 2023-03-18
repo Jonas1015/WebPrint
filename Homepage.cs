@@ -27,7 +27,7 @@ namespace WebPrinting
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error occured when starting an application. Error: {ex.Message}");
+                MessageBox.Show($"Error occured when starting an application, some functionalities won't work. Error: {ex.Message}");
             }
         }
 
@@ -114,8 +114,7 @@ namespace WebPrinting
 
         private void LoadPrintServerSettings()
         {
-            string query = $"SELECT * FROM PrintServerSettings;";
-
+            string query = $"SELECT * FROM AppSettings;";
             SQLiteConnection connection = new SQLiteConnection(this.dbConnectionString);
             connection.Open();
             SQLiteCommand command = new SQLiteCommand(query, connection);
@@ -219,7 +218,7 @@ namespace WebPrinting
                 {
                     if (int.TryParse(port, out int parsedPort))
                     {
-                        string query = $"UPDATE PrintServerSettings set autoStart={autoStart},ipAddress='{ipAddress}',portNumber={parsedPort}  WHERE id=1;";
+                        string query = $"UPDATE AppSettings set autoStart={autoStart},ipAddress='{ipAddress}',portNumber={parsedPort}  WHERE id=1;";
                         SQLiteConnection connection = new SQLiteConnection(this.dbConnectionString);
                         connection.Open();
                         SQLiteCommand command = new SQLiteCommand(query, connection);
@@ -262,7 +261,17 @@ namespace WebPrinting
                 string printer = this.printers.SelectedItem.ToString();
                 int useThisPrinter = 0;
                 string zplCommands = this.zplCommands.Text;
-                if (this.useThisPrinter.Checked) useThisPrinter = 1;
+                if (this.useThisPrinter.Checked)
+                {
+                    useThisPrinter = 1;
+
+                    //Update db to use only 1 printer settings.
+                    string useThisPrinterQuery = $"UPDATE PrinterSettings SET useThis=0 WHERE printerModel NOT LIKE '{printer}';";
+
+                    SQLiteCommand useThisCommand = new SQLiteCommand(useThisPrinterQuery, connection);
+                    var useThisCommandResponse = useThisCommand.ExecuteNonQuery();
+                    
+                }
 
                 string existingPrinter = $"SELECT * FROM PrinterSettings WHERE printerModel='{printer}';";
 
@@ -278,7 +287,11 @@ namespace WebPrinting
                     var response = command.ExecuteNonQuery();
                     if (response > 0)
                     {
+                        
                         MessageBox.Show("Printer settings saved successfully");
+                        this.printers.SelectedItem = null;
+                        this.zplCommands.Text = "";
+                        this.useThisPrinter.Checked = false;
                     }
                     else
                     {
@@ -294,6 +307,7 @@ namespace WebPrinting
                     if (response > 0)
                     {
                         MessageBox.Show("Printer settings updated successfully");
+                        
                     }
                     else
                     {
@@ -304,6 +318,7 @@ namespace WebPrinting
                 {
                     MessageBox.Show("Couldn't update data into the database because more than 1 records was found from the database.");
                 }
+                LoadAvailablePrinters();
 
 
             }
