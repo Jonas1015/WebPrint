@@ -241,6 +241,7 @@
     <Content Include="PrintServer.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\refresh-button.png" />
     <None Include="Resources\PrintServer.png" />
   </ItemGroup>
   <ItemGroup>

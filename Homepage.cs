@@ -65,9 +65,9 @@ namespace WebPrinting
                             zplCommands = zplCommands.Replace("{{Storage}}", messageObject.Message.Storage);
                             zplCommands = zplCommands.Replace("{{PatientNames}}", messageObject.Message.PatientNames);
                             zplCommands = zplCommands.Replace("{{Date}}", messageObject.Message.Date);
+                            zplCommands = zplCommands.Replace("{{BarcodeData}}", messageObject.Message.BarcodeData);
 
                             PrintMessage(zplCommands);
-                            Console.WriteLine(zplCommands);
                             string successMessage = JsonSerializer.Serialize(new SocketMessage
                             {
                                 Type = "Success",
@@ -100,6 +100,8 @@ namespace WebPrinting
 
         private void LoadPrinters()
         {
+            //Clear printers list first
+            this.printers.Items.Clear();
 
             // Get all installed printers
             PrinterSettings.StringCollection printers = PrinterSettings.InstalledPrinters;
@@ -307,7 +309,11 @@ namespace WebPrinting
                     if (response > 0)
                     {
                         MessageBox.Show("Printer settings updated successfully");
-                        
+                        this.printers.SelectedItem = null;
+                        this.zplCommands.Text = "";
+                        this.useThisPrinter.Checked = false;
+                        this.homePageTabControl.SelectedTab = this.printersListPage;
+
                     }
                     else
                     {
@@ -506,6 +512,11 @@ namespace WebPrinting
                this.PrintMessage(zplCommands.Text);
             }
         }
+
+        private void reloadInstalledPrinters_Click(object sender, EventArgs e)
+        {
+            LoadPrinters();
+        }
     }
 
     public class SocketMessage
@@ -518,6 +529,7 @@ namespace WebPrinting
     public class IncomingMessage
     {
         public string SampleID { get; set; }
+        public string BarcodeData { get; set; }
         public string Tests { get; set; }
         public string PatientNames { get; set; }
         public string Storage { get; set; }

@@ -66,7 +66,7 @@ namespace WebPrinting
             this.savePrintServerSettingsButton = new System.Windows.Forms.Button();
             this.addressLabel = new System.Windows.Forms.Label();
             this.printServerAutoStart = new System.Windows.Forms.CheckBox();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.reloadInstalledPrinters = new System.Windows.Forms.Button();
             this.homePageTabControl.SuspendLayout();
             this.welcomePage.SuspendLayout();
             this.printersListPage.SuspendLayout();
@@ -232,6 +232,7 @@ namespace WebPrinting
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.reloadInstalledPrinters);
             this.groupBox2.Controls.Add(this.testZPL);
             this.groupBox2.Controls.Add(this.savePrintersSettingsButton);
             this.groupBox2.Controls.Add(this.label5);
@@ -307,7 +308,7 @@ namespace WebPrinting
             this.printers.FormattingEnabled = true;
             this.printers.Location = new System.Drawing.Point(107, 41);
             this.printers.Name = "printers";
-            this.printers.Size = new System.Drawing.Size(375, 21);
+            this.printers.Size = new System.Drawing.Size(295, 21);
             this.printers.TabIndex = 12;
             // 
             // groupBox1
@@ -377,11 +378,15 @@ namespace WebPrinting
             this.printServerAutoStart.Text = "Print Server Auto Start";
             this.printServerAutoStart.UseVisualStyleBackColor = true;
             // 
-            // imageList1
+            // reloadInstalledPrinters
             // 
-            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.reloadInstalledPrinters.Location = new System.Drawing.Point(418, 41);
+            this.reloadInstalledPrinters.Name = "reloadInstalledPrinters";
+            this.reloadInstalledPrinters.Size = new System.Drawing.Size(64, 23);
+            this.reloadInstalledPrinters.TabIndex = 15;
+            this.reloadInstalledPrinters.Text = "Reload";
+            this.reloadInstalledPrinters.UseVisualStyleBackColor = true;
+            this.reloadInstalledPrinters.Click += new System.EventHandler(this.reloadInstalledPrinters_Click);
             // 
             // Homepage
             // 
@@ -438,7 +443,7 @@ namespace WebPrinting
         private TextBox port;
         private TextBox ipAddress;
         private GroupBox groupBox2;
-        private ImageList imageList1;
+        private Button reloadInstalledPrinters;
     }
 }
 
